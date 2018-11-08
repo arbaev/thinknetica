@@ -36,12 +36,13 @@ puts "============================"
 puts "====== Список товаров ======"
 puts "Товар \t| Цена \t| Кол \t| Сумма"
 
-total = goods.reduce(0) do |acc, el|
+total = 0
+goods.each do |el|
   price = trim(el.last[:price])
   quantity = trim(el.last[:quantity])
-  sum = (price * quantity).round(2)
+  sum = trim((price * quantity).round(2))
   puts "#{el.first} \t| #{price} \t| #{quantity} \t| #{sum}"
-  acc += sum
+  total += sum
 end
 
 puts "Итого: #{total}"

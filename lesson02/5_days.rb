@@ -10,19 +10,11 @@ def leap?(year)
 end
 
 def howmanydays(year, month, day)
-  months = {
-    1 => 31, 2 => 28, 3 => 31, 
-    4 => 30, 5 => 31, 6 => 30,
-    7 => 31, 8 => 31, 9 => 30,
-    10 => 31, 11 => 30, 12 => 31
-  }
-  
-  days = day + months.reduce(0) do |acc, m|
-    acc += m.last if m.first < month
-    acc
-  end
+  days_of_months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
-  leap?(year) ? days + 1 : days
+  days_of_months[1] = 29 if leap?(year)
+
+  day + days_of_months.take(month - 1).sum
 end
 
 puts "Определим порядковый номер указанной даты"
