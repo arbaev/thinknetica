@@ -14,8 +14,8 @@
 #      Перемещение возможно вперед и назад, но только на 1 станцию за раз.
 #   Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
 class Train
-  attr_accessor :route
-  attr_reader :speed, :wagons, :type, :number, :current
+  attr_accessor :route, :current
+  attr_reader :speed, :wagons, :type, :number
 
 # Для создания поезда нужно указать его номер, опционально - тип и количество вагонов
   def initialize(number, type = :freight, wagons = 0)
@@ -23,6 +23,8 @@ class Train
     @type = type
     @wagons = wagons
     @speed = 0
+    @route = []
+    @current = nil
     puts "Создан поезд №#{self.number} типа #{self.type} длиной #{self.wagons} вагонов."
     return self
   end
@@ -47,21 +49,18 @@ class Train
 # Увеличивает скорость поезда на 20 км/ч, макс.скорость 150 км/ч
   def faster
     self.speed += 20
-
     if moving? && self.speed >= 150
       self.speed = 150
       puts "Поезд №#{self.number} на максимальной скорости: #{self.speed}"
     else
       puts "Поезд №#{self.number} ускорился до #{self.speed} км/ч"
     end
-
     return self
   end
 
 # Уменьшает скорость поезда на 20 км/ч
   def slower
     self.speed -= 20
-
     if moving?
       puts "Поезд №#{self.number} замедлился до #{self.speed} км/ч"
     else
@@ -99,51 +98,63 @@ class Train
     return self
   end
 
-# Задание маршрута
+# Установка маршрута
   def route_set(r)
     self.route = r.route
-    @current = @start = @prev = route.first
-    @fin = route.last
-    puts "Поезду #{self.number} установлен маршрут #{@start}-#{@fin}. Следующая станция #{@current}"
+    puts "Поезду №#{self.number} установлен маршрут #{self.route.first.name}-#{self.route.last.name}."
+    self.route[0].arrive(self)
     return self
   end
 
   def route_info
-    final = ""
-    if @current == @prev
-      @prev = "отсутствует"
-    end
-    if @current == @fin
-      final = ", конечная"
-    end
-    puts "Поезд двигается по маршруту #{@start}-#{@fin}. Предыдущая станция #{@prev}. Следующая станция #{@current}#{final}."
+    puts "Поезд двигается по маршруту #{self.route.start.name}-#{self.route.finish.name}. \
+     Предыдущая станция #{@prev}. Следующая станция #{@current}#{final}."
     return self.route
   end
 
 # Перемещение поезда к следующей станции
   def move_forward
-    if @current == @fin
-      puts "Поезд уже на конечной станции: #{@current}"
-    else
-      next_index = self.route.index(@current) + 1
-      @prev = @current
-      @current = self.route[next_index]
-      puts "Уехали со станции #{@prev}, приехали на станцию #{@current}"
+    return self if !has_route?
+
+    if self.current == self.route.last
+      puts "Поезд уже на конечной станции"
+      return self
     end
-    return @current
+
+    prev = self.current
+    next_index = self.route.index(self.current) + 1
+    self.current = self.route[next_index]
+    puts "Уехали со станции #{prev.name}, приехали на станцию #{self.current.name}"
+    return self
   end
 
 # Перемещение поезда к предыдущей станции
   def move_back
-    if @current == @start
-      puts "Поезд уже на начальной станции: #{@current}"
-    else
-      next_index = self.route.index(@current) - 1
-      @prev = @current
-      @current = self.route[next_index]
-      puts "Уехали со станции #{@prev}, приехали на станцию #{@current}"
+    return self if !has_route?
+
+    if self.current == self.route.first
+      puts "Поезд уже на начальной станции"
+      return self
     end
-    return @current
+
+    prev = self.current
+    next_index = self.route.index(self.current) - 1
+    self.current = self.route[next_index]
+    puts "Уехали со станции #{prev.name}, приехали на станцию #{self.current.name}"
+    return self
   end
+
+  def has_route?
+    if self.route.empty?
+      puts "Маршрут не задан, некуда ехать."
+      return false
+    else
+      true
+    end
+  end
+
+  private
+
+  attr_writer :speed
 
 end

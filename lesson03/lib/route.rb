@@ -6,60 +6,62 @@
 #  Может удалять промежуточную станцию из списка
 #  Может выводить список всех станций по-порядку от начальной до конечной
 class Route
-  attr_reader :route
+  attr_reader :route, :start, :finish
 
-# Для создания маршрута нужно указать массив станций. 
-# Минимально 2 станции, начало и конец маршрута
-  def initialize(route = [])
-    if route.size < 2
-      puts "В маршруте не хватает станций"
-    else
-      @route = route
-      puts "Маршрут #{@route.first} - #{@route.last} создан."
-      return self
-    end
+# Для создания маршрута нужно указать начальную и конечную станцию. 
+  def initialize(start, finish)
+    @start = Station.new(start)
+    @finish = Station.new(finish)
+    @route = [@start, @finish]
+    puts "Маршрут #{@start.name} - #{@finish.name} создан."
+    return self
   end
 
 # Выводит нумерованый список всех станций маршрута
   def list
-    puts "Маршрут от #{self.route.first} до #{self.route.last}"
-    self.route.each_with_index { |station, index| puts "#{index+1}. #{station}" }
+    puts "Маршрут от #{self.start.name} до #{self.finish.name}"
+    self.route.each_with_index { |station, index| puts "#{index + 1}. #{station.name}" }
   end
 
-# Вставляет станцию в маршрут по указанному порядковому номеру (от 1 и далее)
-# Метод не проверяет правильность индекса, тем и плох. Лучше использовать метод add_after
-  def add_at(index, name)
-    self.route.insert(index-1, name)
-    puts "Станция #{name} добавлена между #{self.route[index-2]} и #{self.route[index]}"
-    return self
-  end
-
-# Вставляет новую станцию в маршрут после указанной имеющейся
+# Добавляет новую станцию в маршрут после указанной имеющейся
   def add_after(after, name)
-    after_index = self.route.index(after)
-    if after_index.nil?
+    s_index = self.station_index(after)
+
+    if s_index.nil?
       puts "Станции #{after} нет в маршруте. Нельзя добавить новую после неё."
       return false
     end
-    self.route.insert(after_index+1, name)
+    if after == self.finish.name
+      puts "Нельзя добавить станцию после конечной станции."
+      return false
+    end
+
     puts "Станция #{name} добавлена после #{after}"
-    return self
+    self.route.insert(s_index + 1, Station.new(name))
   end
 
 # Удаляет станцию из маршрута
   def delete(name)
-    if self.route.size <= 2
-      puts "Маршрут не имеет промежуточных станций, нечего удалять"
+    s_index = self.station_index(name)
+
+    if s_index.nil?
+      puts "Станции '#{name}' нет в маршруте, нельзя удалить."
+      return false
+    end
+    if s_index == 0 || s_index == self.route.size - 1
+      puts "Нельзя удалить начальную или конечную станции маршрута."
       return false
     end
 
-    if self.route.include?(name)
-      self.route.delete(name)
-      puts "Станция '#{name}' удалена из маршрута"
-    else
-      puts "Станции '#{name}' нет в маршруте, нельзя удалить."
-    end
-    return self
+    puts "Станция #{name} удалена из маршрута"
+    self.route.delete_at(s_index)
+    self.route
+  end
+
+  # возвращает индекс станции в маршруте или nil если не таковой не существует  
+  def station_index(name)
+    self.route.each_with_index { |station, index| return index if name == station.name }
+    return nil
   end
 
 end
