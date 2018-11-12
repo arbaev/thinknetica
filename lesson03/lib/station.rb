@@ -13,49 +13,59 @@ class Station
     @name = name
     @trains = []
     puts "Станция #{@name} создана"
-    return self
   end
 
+# Прибытие поезда на станцию. Принимает объект «поезд», возвращает объект «станция»
   def arrive(train)
-    if train.current == self
-      puts "Поезд #{train.number} уже на станции #{self.name}"
+    if train.current_station == self
+      puts "Поезд №#{train.number} уже на станции #{self.name}"
     else
-      train.current = self
+      train.current_station = self
       self.trains.push(train)
-      puts "Поезд с номером #{train.number} и типом #{train.type} принят на станцию #{self.name}"
+      puts "Поезд №#{train.number} и типом #{train.type} прибыл на станцию #{self.name}"
     end
     return self
   end
 
-# Отправление поезда со станции. Переезд на следующую станцию,
+# Отправление поезда со станции. Переезд на следующую станцию.
+# Принимает объект «поезд», возвращает объект «станция»
   def departure(train)
-    if train.route.any?
-      train.move_forward
+    if train.current_station == self
+      self.trains.delete(train)
+      puts "Поезд №#{train.number} выехал со станции #{self.name}"
+      return self
+    else
+      return      
     end
-    puts "Поезд #{train.number} выехал со станции #{self.name}"
-    return self.trains
   end
 
+# выводит список поездов на станции; возвращает массив поездов на станции
   def list
-    if self.trains.empty?
-      puts "На станции #{self.name} поездов нет."
-    else
-      puts "На станции #{self.name} находятся поезда:"
-      self.trains.map { |t| puts "№#{t.number} тип #{t.type} вагонов #{t.wagons}" }
-    end
-    return self
+    return unless has_trains?
+
+    puts "На станции #{self.name} находятся поезда:"
+    self.trains.map { |t| puts "№#{t.number} тип #{t.type} вагонов #{t.wagons}" }
+    return self.trains
   end
 
+# выводит список типов поездов на станции; возвращает хеш типов поездов
   def list_types
+    return unless has_trains?
+
+    types = {}
+    self.trains.map { |t| types[t.type].nil? ? types[t.type] = 1 : types[t.type] += 1 }
+    puts "На станции #{self.name} находятся поезда:"
+    types.map { |typ, count| puts "типа #{typ}: #{count} шт." }
+    types
+  end
+
+  def has_trains?
     if self.trains.empty?
       puts "На станции #{self.name} поездов нет."
+      return
     else
-      types = {}
-      self.trains.map { |t| types[t.type].nil? ? types[t.type] = 1 : types[t.type] += 1 }
-      puts "На станции #{self.name} находят поезда:"
-      types.map { |typ, count| puts "типа #{typ}: #{count} шт." }
+      true
     end
-    return self.trains
   end
 
 end
