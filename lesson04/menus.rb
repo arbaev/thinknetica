@@ -41,6 +41,8 @@ class Menus
     main_menu
   end
 
+  private
+
   def inputs(menu)
     puts '==================='
     menu.each {|k,v| puts "#{k} - #{v[:label]}" }
@@ -84,8 +86,9 @@ class Menus
 
   def station_create
     puts 'Создание станции'
-    res = @stations.push(Station.new(ask('Введите название станции'))).last
-    !puts "=> Создана станция #{res.name}: #{res.inspect}"
+    station = Station.new(ask('Введите название станции'))
+    puts "=> Создана станция #{station.name}"
+    @stations.push(station)
   end
 
   def station_list
