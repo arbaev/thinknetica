@@ -14,8 +14,8 @@
 #      Перемещение возможно вперед и назад, но только на 1 станцию за раз.
 #   Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
 class Train
-  
-  attr_reader :number, :speed, :type, :wags
+
+  attr_reader :number, :speed, :type, :wags, :route
 
   def initialize(number, type = :cargo)
     @number = number
@@ -33,6 +33,7 @@ class Train
   end
 
   def current_station
+    return unless @route
     @route.route[@station_index]
   end
 

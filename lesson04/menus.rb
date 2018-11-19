@@ -1,37 +1,37 @@
 class Menus
 
   MAIN_MENU = {
-    "1" => { label: "Действия со станцией", func: :station_menu },
-    "2" => { label: "Действия с маршрутом", func: :route_menu },
-    "3" => { label: "Действия с поездом", func: :train_menu },
+    "1" => { label: "Создать: станцию, поезд, маршрут", func: :creating_menu },
+    "2" => { label: "Редактировать: поезд, маршрут", func: :editing_menu },
+    "3" => { label: "Информация и движение поезда", func: :moving_menu },
     "0" => { label: "Выход", func: :exit_menu }
   }
-  STATION_MENU = {
+  CREATING_MENU = {
     "1" => { label: "Создать станцию", func: :station_create },
-    "2" => { label: "Список станций", func: :station_list },
-    "3" => { label: "Список маршрутов", func: :route_list },
-    "4" => { label: "Список поездов на станции", func: :station_trains_list },
+    "2" => { label: "Создать грузовой поезд", func: :train_create_cargo },
+    "3" => { label: "Создать пассажирский поезд", func: :train_create_passenger },
+    "4" => { label: "Создать маршрут", func: :route_create },
     "0" => { label: "Выход в главное меню", func: :exit_menu }
   }
-  TRAIN_MENU = {
-    "1" => { label: "Создать грузовой поезд", func: :train_create_cargo },
-    "2" => { label: "Создать пассажирский поезд", func: :train_create_passenger },
-    "3" => { label: "Добавить вагоны к поезду", func: :train_add_wagons },
-    "4" => { label: "Отцепить вагоны от поезда", func: :train_del_wagons },
+  EDITING_MENU = {
+    "1" => { label: "Добавить вагоны к поезду", func: :train_add_wagons },
+    "2" => { label: "Отцепить вагоны от поезда", func: :train_del_wagons },
+    "3" => { label: "Добавить станцию в маршрут", func: :route_add_station },
+    "4" => { label: "Удалить станцию из маршрута", func: :route_del_station },
     "5" => { label: "Назначить маршрут поезду", func: :train_set_route },
+    "0" => { label: "Выход в главное меню", func: :exit_menu }
+  }
+  MOVING_MENU = {
+    "1" => { label: "Список станций", func: :station_list },
+    "2" => { label: "Список маршрутов", func: :route_list },
+    "3" => { label: "Список всех поездов", func: :train_list },
+    "4" => { label: "Список всех поездов с маршрутом", func: :train_list_with_routes },
+    "5" => { label: "Список поездов на станции", func: :station_trains_list },
     "6" => { label: "Движение по маршруту вперёд", func: :train_move_forward },
     "7" => { label: "Движение по маршруту назад", func: :train_move_back },
-    "8" => { label: "Список всех поездов", func: :show_train_list },
     "0" => { label: "Выход в главное меню", func: :exit_menu }
   }
-  ROUTES_MENU = {
-    "1" => { label: "Создать маршрут", func: :route_create },
-    "2" => { label: "Добавить станцию в маршрут", func: :route_add_station },
-    "3" => { label: "Удалить станцию из маршрута", func: :route_del_station },
-    "4" => { label: "Список маршрутов", func: :route_list },
-    "5" => { label: "Назначить маршрут поезду", func: :train_set_route },
-    "0" => { label: "Выход в главное меню", func: :exit_menu }
-  }
+  TOO_LONG = 99999999
 
   def initialize
     @stations = []
@@ -63,16 +63,16 @@ class Menus
     !loop { inputs(MAIN_MENU) || break }
   end
 
-  def station_menu
-    !loop { inputs(STATION_MENU) || break }
+  def creating_menu
+    !loop { inputs(CREATING_MENU) || break }
   end
 
-  def train_menu
-    !loop { inputs(TRAIN_MENU) || break }
+  def editing_menu
+    !loop { inputs(EDITING_MENU) || break }
   end
 
-  def route_menu
-    !loop { inputs(ROUTES_MENU) || break }
+  def moving_menu
+    !loop { inputs(MOVING_MENU) || break }
   end
 
   def exit_menu
@@ -84,6 +84,70 @@ class Menus
     gets.chomp
   end
 
+  def ask_i(question)
+    print question + " "
+    i = gets.chomp.to_i
+    return TOO_LONG if i.zero?
+    i-1 # because array index from zero but listings from one
+  end
+
+  def incorrect?(value)
+    if value.nil?
+      puts 'Неправильно указан номер'
+      return true
+    else
+      false
+    end
+  end
+
+  def station_list
+    if @stations.empty?
+      puts '=> Станций нет'
+    else
+      @stations.each.with_index(1) { |s, i| puts "#{i}. Станция #{s.name}, поездов #{s.trains.size}" }
+    end
+    @stations.size
+  end
+
+  def route_list
+    if @routes.empty?
+      puts '=> Маршрутов нет'
+    else
+      @routes.each.with_index(1) { |r, i| puts "#{i}. Маршрут #{route_info(r)}" }
+    end
+    @routes.size
+  end
+
+  def route_info(r)
+    return "не задан" unless r
+    points = []
+    r.route.each { |r| points.push(r.name) }
+    points.join('-')
+  end
+
+  def train_list
+    if @trains.empty?
+      puts "=> Поездов нет"
+    else
+      @trains.each.with_index(1) { |t, i| puts "#{i}. #{train_info(t)}, маршрут #{route_info(t.route)}" }
+    end
+    @trains.size
+  end
+
+  def train_list_with_routes
+    trains_with_routs = @trains.select { |t| t.current_station }
+    if trains_with_routs.empty?
+      puts "=> Поездов с маршрутом нет"
+    else
+      trains_with_routs.each.with_index(1) { |t, i| puts "#{i}. #{train_info(t)}, маршрут #{route_info(t.route)}" }
+    end
+    trains_with_routs.size
+  end
+
+  def train_info(train)
+    "поезд #{train.number}, тип: #{train.type}, вагонов: #{train.wagons}"
+  end
+
   def station_create
     puts 'Создание станции'
     station = Station.new(ask('Введите название станции'))
@@ -91,73 +155,67 @@ class Menus
     @stations.push(station)
   end
 
-  def station_list
-    if @stations.empty?
-      !puts '=> Станций нет'
-    else
-      @stations.each.with_index { |s, i| puts "#{i}. Станция #{s.name}, поездов #{s.trains.size}" }
-    end
-  end
-
   def route_create
-    station_list
-    start_index = ask('Укажите номер начальной станции маршрута:').to_i
-    finish_index = ask('Укажите номер конечной станции маршрута:').to_i
+    if station_list < 2
+      puts "=> маршрут нельзя задать"
+      return true
+    end
 
-    route = Route.new(@stations[start_index], @stations[finish_index])
+    start_index = ask_i('Укажите номер начальной станции маршрута:')
+    start = @stations[start_index]
+    return 0 if incorrect?(start)
+    finish_index = ask_i('Укажите номер конечной станции маршрута:')
+    finish = @stations[finish_index]
+    return 0 if incorrect?(finish)
+
+    route = Route.new(start, finish)
     puts "Создан маршрут #{route_info(route)}"
     @routes.push(route)
   end
 
-  def route_list
-    if @routes.empty?
-      !puts '=> Маршрутов нет'
-    else
-      @routes.each.with_index { |r, i| puts "#{i}. Маршрут #{route_info(r)}" }
-    end
-  end
-
-  def route_info(r)
-    points = []
-    r.route.each { |r| points.push(r.name) }
-    points.join('-')
-  end
-
   def route_add_station
-    route_list
-    route_index = ask('Выберите номер маршрута:').to_i
+    return 0 if route_list.zero?
+    route_index = ask_i('Выберите номер маршрута:')
     route = @routes[route_index]
+    return 0 if incorrect?(route)
 
     station_list
-    station_index = ask('Укажите номер станции для добавления в маршрут:').to_i
+    station_index = ask_i('Укажите номер станции для добавления в маршрут:')
+    station = @stations[station_index]
+    return 0 if incorrect?(station)
 
-    route.add(@stations[station_index])
+    route.add(station)
     puts "=> Станция добавлена, теперь маршрут: #{route_info(route)}"
     route
   end
 
   def route_del_station
-    route_list
-    route_index = ask('Выберите номер маршрута:').to_i
+    return 0 if route_list.zero?
+    route_index = ask_i('Выберите номер маршрута:')
     route = @routes[route_index]
+    return 0 if incorrect?(route)
 
     station_list
-    station_index = ask('Укажите номер станции для удаления из маршрута:').to_i
+    station_index = ask_i('Укажите номер станции для удаления из маршрута:')
+    station = @stations[station_index]
+    return 0 if incorrect?(station)
 
-    route.del(@stations[station_index])
+    route.del(station)
     puts "=> Станция удалена, теперь маршрут: #{route_info(route)}"
     route
   end
 
   def station_trains_list
-    station_list
-    station_index = ask('Введите номер станции, где показать поезда:').to_i
+    return 0 if station_list.zero?
+    station_index = ask_i('Введите номер станции, где показать поезда:')
     station = @stations[station_index]
+    return 0 if incorrect?(station)
+
     if station.trains.empty?
       !puts "=> На станции #{station.name} поездов нет"
     else
       puts "=> На станции #{station.name} находятся поезда:"
-      station.trains.each { |t| puts "Поезд №#{t.number}, тип: #{t.type}, вагонов: #{t.wagons}" }
+      station.trains.each { |t| puts "Поезд #{t.number}, тип: #{t.type}, вагонов: #{t.wagons}" }
     end
   end
 
@@ -174,10 +232,12 @@ class Menus
   end
 
   def train_add_wagons
-    show_train_list
-    train_index = ask("Укажите индекс поезда для добавления вагонов:").to_i
-    wagons_amount = ask("Сколько вагонов добавить?").to_i
+    return 0 if train_list.zero?
+    train_index = ask_i("Укажите индекс поезда для добавления вагонов:")
     train = @trains[train_index]
+    return 0 if incorrect?(train)
+
+    wagons_amount = ask("Сколько вагонов добавить?").to_i
 
     if train.type == :cargo
       wagons_amount.times { train.wagon_add(WagonCargo.new) }
@@ -188,52 +248,59 @@ class Menus
   end
 
   def train_del_wagons
-    show_train_list
-    train_index = ask("Укажите индекс поезда для добавления вагонов:").to_i
-    wagons_amount = ask("Сколько вагонов отцепить?").to_i
+    return 0 if train_list.zero?
+    train_index = ask_i("Укажите индекс поезда для удаления вагонов:")
     train = @trains[train_index]
+    return 0 if incorrect?(train)
+
+    wagons_amount = ask("Сколько вагонов отцепить?").to_i
     wagons_amount.times { train.wagon_del }
     !puts "=> Вагоны отцеплены, #{train_info(train)}"
   end
 
   def train_set_route
-    route_list
-    route_index = ask('Выберите номер маршрута:').to_i
+    return 0 if route_list.zero?
+    route_index = ask_i('Выберите номер маршрута:')
     route = @routes[route_index]
+    return 0 if incorrect?(route)
 
-    show_train_list
-    train_index = ask("Укажите индекс поезда для назначения маршрута:").to_i
+    return 0 if train_list.zero?
+    train_index = ask_i("Укажите индекс поезда для назначения маршрута:")
     train = @trains[train_index]
+    return 0 if incorrect?(train)
+
     train.route_set(route)
-    !puts "=> Поезду №#{train.number} установлен маршрут #{route_info(route)}"
+    !puts "=> Поезду #{train.number} установлен маршрут #{route_info(route)}"
   end
 
   def train_move_forward
-    show_train_list
-    train_index = ask("Укажите индекс поезда для движения вперёд").to_i
+    return 0 if train_list_with_routes.zero?
+    train_index = ask_i("Укажите индекс поезда для движения вперёд")
     train = @trains[train_index]
-    train.move_forward
-    !puts "=> Поезд №#{train.number} уехал со станции #{train.prev_station.name} и приехал на станцию #{train.current_station.name}. Следующая станция #{train.next_station.name}"
+    return 0 if incorrect?(train)
+    return 0 if incorrect?(train.current_station)
+
+    if train.move_forward
+      puts "=> Поезд #{train.number} уехал со станции #{train.prev_station.name} и приехал на станцию #{train.current_station.name}."
+    else
+      puts "=> Поезд #{train.number} на конечной станции."
+    end
+    train.current_station
   end
 
   def train_move_back
-    show_train_list
-    train_index = ask("Укажите индекс поезда для движения назад").to_i
+    return 0 if train_list_with_routes.zero?
+    train_index = ask_i("Укажите индекс поезда для движения назад")
     train = @trains[train_index]
-    train.move_back
-    !puts "=> Поезд №#{train.number} уехал со станции #{train.next_station.name} и приехал на станцию #{train.current_station.name}. Следующая станция #{train.prev_station.name}"
-  end
+    return 0 if incorrect?(train)
+    return 0 if incorrect?(train.current_station)
 
-  def show_train_list
-    if @trains.empty?
-      !puts "=> Поездов нет"
+    if train.move_back
+      puts "=> Поезд #{train.number} приехал на станцию #{train.current_station.name}."
     else
-      @trains.each.with_index { |t, i| puts "#{i}. #{train_info(t)}" }
+      puts "=> Поезд #{train.number} на начальной станции."
     end
-  end
-
-  def train_info(train)
-    "поезд №#{train.number}, тип: #{train.type}, вагонов: #{train.wagons}"
+    train.current_station
   end
 
 end
