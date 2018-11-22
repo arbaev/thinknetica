@@ -13,9 +13,20 @@
 #   Может перемещаться между станциями, указанными в маршруте.
 #      Перемещение возможно вперед и назад, но только на 1 станцию за раз.
 #   Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
+require_relative 'manufacturer'
+require_relative 'instance_counter'
+
 class Train
+  include InstanceCounter
+  include Manufacturer
 
   attr_reader :number, :speed, :type, :wags, :route
+
+  @@trains_all = []
+  def self.find(number)
+    @@trains_all.each { |x| return x if x.number == number }
+    return
+  end
 
   def initialize(number, type = :cargo)
     @number = number
@@ -24,6 +35,8 @@ class Train
     @speed = 0
     @route = nil
     @station_index = nil
+    @@trains_all.push(self)
+    register_instance
   end
 
   def route_set(r)
