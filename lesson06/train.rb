@@ -24,8 +24,7 @@ class Train
 
   @@trains_all = []
   def self.find(number)
-    @@trains_all.each { |x| return x if x.number == number }
-    return
+    @@trains_all.find { |x| return x if x.number == number }
   end
 
   def initialize(number, type = :cargo)

@@ -5,16 +5,15 @@ module InstanceCounter
   end
 
   module ClassMethods
-    @@instances = 0
-
     def instances
-      @@instances
+      @instances || 0
     end
 
     private
 
     def instances_increment
-      @@instances += 1
+      @instances ||= 0
+      @instances += 1
     end
   end
 
