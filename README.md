@@ -1,12 +1,12 @@
 # Thinknetica Ruby course
 
-### Рекомендуемая литература
+### Рекомендуемая литература от Виталия Куреннова
 
 *Ruby*
 
 * [Х.Фултон. Программирование на языке Ruby](http://www.ozon.ru/context/detail/id/3411405/)
 * [PickAxe (Programming Ruby)](http://ruby-doc.com/docs/ProgrammingRuby/)
-* [Well-Grounded Rubyist](http://www.amazon.com/gp/product/1933988657/ref=s9_simh_gw_p14_d6_i2?pf_rd_m=ATVPDKIKX0DER&amp;pf_rd_s=center-2&amp;pf_rd_r=0BARDCK32PZC8XMAC8SG&amp;pf_rd_t=101&amp;pf_rd_p=1688200382&amp;pf_rd_i=507846)
+* [The Well-Grounded Rubyist](http://www.amazon.com/gp/product/1933988657/ref=s9_simh_gw_p14_d6_i2?pf_rd_m=ATVPDKIKX0DER&amp;pf_rd_s=center-2&amp;pf_rd_r=0BARDCK32PZC8XMAC8SG&amp;pf_rd_t=101&amp;pf_rd_p=1688200382&amp;pf_rd_i=507846)
 * [Eloquent Ruby](http://www.amazon.com/Eloquent-Ruby-Addison-Wesley-Professional-Series/dp/0321584104/ref=pd_sim_b_1?ie=UTF8&amp;refRID=1ZD602S7QQBQA9K71JVQ)
 * [Practical Object-Oriented Design in Ruby](http://www.amazon.com/Practical-Object-Oriented-Design-Ruby-Addison-Wesley/dp/0321721330/ref=pd_sim_b_1?ie=UTF8&amp;refRID=1DYG1HE1R5M8NS0WPZHS)
 * [Design Patterns in Ruby](http://www.amazon.com/Design-Patterns-Ruby-Russ-Olsen/dp/0321490452/ref=pd_sim_b_2?ie=UTF8&amp;refRID=1DYG1HE1R5M8NS0WPZHS)
@@ -30,6 +30,17 @@
 *Тестирование:*
 
 * [Everyday Rails Testing with RSpec](https://leanpub.com/everydayrailsrspec)
+
+### Рекомендуемая литература от Евгения Фатеева
+
+На меня произвела сильное впечатление книга Тимоти Бадда [ООП в действии](http://www.ozon.ru/context/detail/id/136821/)
+
+Что касается Ruby, вот хорошие книги:
+* [Д.Флэнаган, Ю.Мацумото - Язык программирование Руби](https://scanlibs.com/yazyik-programmirovaniya-ruby/)
+* [The Ruby Way](https://scanlibs.com/put-ruby-trete-izdanie/)
+* [Metaprogramming Ruby 2: Program Like the Ruby Pros](https://scanlibs.com/metaprogramming-ruby-2-program-like-the-ruby-pros/)
+* [Confident Ruby: 32 Patterns for Joyful Coding](https://scanlibs.com/confident-ruby/)
+* [Мир Rails. Правильное обучение разработке веб-приложений на Ruby On Rails](https://scanlibs.com/obuchenie-razrabotke-veb-prilozheniy-na-ruby-on-rails/)
 
 
 #### Книги, которые рекомендует Кирилл Мокевнин в выступлении [«Ментальное программирование»](https://www.youtube.com/watch?v=EEq1wdM2M2w)
