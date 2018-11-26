@@ -1,51 +1,53 @@
-# Класс Route (Маршрут):
-#  Имеет начальную и конечную станцию, а также список промежуточных станций.
-#    Начальная и конечная станции указываются при создании маршрута,
-#    а промежуточные могут добавляться между ними.
-#  Может добавлять промежуточную станцию в список
-#  Может удалять промежуточную станцию из списка
-#  Может выводить список всех станций по-порядку от начальной до конечной
 require_relative 'instance_counter'
+require_relative 'validation'
 
 class Route
   include InstanceCounter
+  include Validation
 
-  attr_reader :start, :finish, :points
+  attr_reader :start, :finish
 
   def initialize(start, finish)
-    validate!(start)
-    validate!(finish)
     @start = start
     @finish = finish
-    @points = []
+    @stations = [@start, @finish]
+    validate!
     register_instance
   end
 
   def route
-    [@start, @points, @finish].flatten.compact
+    @stations
   end
 
   def add(station)
-    validate!(station)
-    self.points.push(station)
+    if @stations.include?(station)
+      raise ArgumentError, "Станция #{station.name} уже есть маршруте"
+    end
+
+    @stations.insert(-2, station)
   end
 
   def del(station)
-    validate!(station)
-    self.points.delete(station)
-  end
+    unless @stations.index(station)
+      raise ArgumentError, "Станции #{station.name} нет в маршруте"
+    end
 
-  def valid?
-    route.each { |s| validate!(s) }
-    true
-  rescue ArgumentError
-    false
+    if station == @start || station == @finish
+      raise ArgumentError, 'Нельзя удалить начальную или конечную станции'
+    end
+
+    @stations.delete(station)
   end
 
   protected
 
-  def validate!(station)
-    raise ArgumentError, 'Параметром маршрута должна быть станция' \
-      unless station.class == Station
+  def validate!
+    if @stations.find { |s| s.class != Station }
+      raise ArgumentError, 'Параметром маршрута должна быть станция'
+    end
+
+    if @start == @finish
+      raise ArgumentError, 'Начальная и конечная станции должны быть разные'
+    end
   end
 end

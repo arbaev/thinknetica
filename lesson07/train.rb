@@ -1,18 +1,3 @@
-# Класс Train (Поезд):
-#   Имеет номер (произвольная строка) и тип (грузовой, пассажирский)
-#     и количество вагонов, эти данные указываются при создании экземпляра класса
-#   Может набирать скорость
-#   Может возвращать текущую скорость
-#   Может тормозить (сбрасывать скорость до нуля)
-#   Может возвращать количество вагонов
-#   Может прицеплять/отцеплять вагоны (по одному вагону за операцию,
-#     метод просто увеличивает или уменьшает количество вагонов).
-#     Прицепка/отцепка вагонов может осуществляться только если поезд не движется.
-#   Может принимать маршрут следования (объект класса Route).
-#   При назначении маршрута поезду, поезд автоматически помещается на первую станцию в маршруте.
-#   Может перемещаться между станциями, указанными в маршруте.
-#      Перемещение возможно вперед и назад, но только на 1 станцию за раз.
-#   Возвращать предыдущую станцию, текущую, следующую, на основе маршрута
 require_relative 'manufacturer'
 require_relative 'instance_counter'
 require_relative 'validation'
@@ -22,7 +7,7 @@ class Train
   include Manufacturer
   include Validation
 
-  TRAIN_NUMBER_FORMAT = /^[a-z\d]{3}(\-[a-z\d]{2})?$/i
+  TRAIN_NUMBER_FORMAT = /^[a-z\d]{3}(\-[a-z\d]{2})?$/i.freeze
   TRAIN_TYPES = %i[cargo passenger].freeze
 
   attr_reader :number, :speed, :type, :wags, :route
@@ -113,10 +98,16 @@ class Train
   protected
 
   def validate!
-    raise ArgumentError, 'Неправильный тип поезда' unless TRAIN_TYPES.include?(@type)
-    raise ArgumentError, 'Неправильный номер вагона: XXX(-XX)' \
-      unless @number =~ TRAIN_NUMBER_FORMAT
-    raise ArgumentError, 'Поезд с таким номером уже существует' \
-      if self.class.find(@number)
+    unless TRAIN_TYPES.include?(@type)
+      raise ArgumentError, 'Неправильный тип поезда'
+    end
+
+    unless @number =~ TRAIN_NUMBER_FORMAT
+      raise ArgumentError, 'Неправильный номер вагона: XXX(-XX)'
+    end
+
+    if self.class.find(@number)
+      raise ArgumentError, 'Поезд с таким номером уже существует'
+    end
   end
 end

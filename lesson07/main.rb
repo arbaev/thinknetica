@@ -9,8 +9,8 @@ require_relative 'wagon_passenger'
 require_relative 'menus'
 
 def seed
-  @tc = TrainCargo.new(1)
-  @tp = TrainPassenger.new(10)
+  @tc = TrainCargo.new(111)
+  @tp = TrainPassenger.new('101-kv')
 
   @wc1 = WagonCargo.new
   @wc2 = WagonCargo.new
@@ -28,6 +28,5 @@ def seed
 
   @tc.route_set(@r1)
 end
-
 
 menus = Menus.new

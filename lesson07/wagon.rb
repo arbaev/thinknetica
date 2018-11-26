@@ -17,6 +17,8 @@ class Wagon
   protected
 
   def validate!
-    raise ArgumentError, 'Неправильный тип вагона' unless WAGON_TYPES.include?(@type)
+    unless WAGON_TYPES.include?(@type)
+      raise ArgumentError, 'Неправильный тип вагона'
+    end
   end
 end
