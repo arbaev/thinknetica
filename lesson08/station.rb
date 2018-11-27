@@ -46,15 +46,15 @@ class Station
   protected
 
   def validate!
-    raise ArgumentError, 'Название станции не указано' if @name.nil?
-    raise ArgumentError, 'Название станции не может быть пустым' if @name.empty?
+    raise ArgumentError, '=> Название станции не указано' if @name.nil?
+    raise ArgumentError, '=> Название станции не может быть пустым' if @name.empty?
 
     if @name[0] == ' '
-      raise ArgumentError, 'Название станции не может начинаться с пробела'
+      raise ArgumentError, '=> Название станции не может начинаться с пробела'
     end
 
     if self.class.find(@name)
-      raise ArgumentError, 'Станция с таким названием уже существует'
+      raise ArgumentError, '=> Станция с таким названием уже существует'
     end
   end
 end

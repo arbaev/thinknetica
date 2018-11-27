@@ -14,14 +14,14 @@ class WagonCargo < Wagon
   def take_capacity(how_much)
     how_much = how_much.to_f
     if capacity_free - how_much < 0
-      raise RuntimeError, "Не хватает объёма, свободно #{capacity_free} м3"
+      raise ArgumentError, "Не хватает объёма, свободно #{capacity_free} м3"
     end
 
     @capacity_occupied += how_much
   end
 
   def capacity_free
-    @capacity - @capacity_occupied
+    (@capacity - @capacity_occupied).to_f
   end
 
   protected

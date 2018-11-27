@@ -34,5 +34,4 @@ def seed
   @tc.route_set(@r1)
 end
 
-seed
 menus = Menus.new

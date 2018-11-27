@@ -12,9 +12,7 @@ class WagonPassenger < Wagon
   end
 
   def take_seat
-    if seats_free.zero?
-      raise RuntimeError, 'Свободных мест нет'
-    end
+    raise ArgumentError, 'Свободных мест нет' if seats_free.zero?
 
     @seats_occupied += 1
   end
