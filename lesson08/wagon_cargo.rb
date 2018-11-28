@@ -5,14 +5,14 @@ class WagonCargo < Wagon
   attr_reader :capacity, :capacity_occupied
 
   def initialize(capacity)
-    @capacity = capacity.to_f
+    @capacity = capacity
     @capacity_occupied = 0.0
     validate!
     super(:cargo)
   end
 
   def take_capacity(how_much)
-    how_much = how_much.to_f
+    how_much = how_much
     if capacity_free - how_much < 0
       raise ArgumentError, "Не хватает объёма, свободно #{capacity_free} м3"
     end
@@ -21,7 +21,7 @@ class WagonCargo < Wagon
   end
 
   def capacity_free
-    (@capacity - @capacity_occupied).to_f
+    @capacity - @capacity_occupied
   end
 
   protected

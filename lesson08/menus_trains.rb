@@ -12,25 +12,26 @@ module MenusTrains
     retry
   end
 
-  def show_trains(arr = @trains)
-    raise ArgumentError, '=> Поездов нет' if arr.empty?
+  # show trains with selected attributes
+  # input is an array [:attribute, :value] or just :attribute if value don't interesting
+  # default attr :number means 'all trains' because they all have number attr
+  def show_trains(attr = :number)
+    trains_arr = trains_select(attr)
+    raise ArgumentError, '=> Поездов нет' if trains_arr.empty?
 
-    arr.each.with_index(1) do |t, i|
+    trains_arr.each.with_index(1) do |t, i|
       puts "#{i}. #{train_info(t)}, маршрут #{route_info(t.route)}"
     end
   rescue ArgumentError => e
     puts e.message
   end
 
-  def show_trains_with_routes
-    raise ArgumentError, '=> Поездов нет' if @trains.empty?
-
-    trains_with_routes = @trains.select(&:current_station)
-    raise ArgumentError, '=> Поездов с маршрутом нет' if trains_with_routes.empty?
-
-    show_trains(trains_with_routes)
-  rescue ArgumentError => e
-    puts e.message
+  def trains_select(attr)
+    if attr.is_a?(Array)
+      @trains.select { |t| t.public_send(attr.first) == attr.last }
+    else
+      @trains.select(&attr)
+    end
   end
 
   def train_info(train)

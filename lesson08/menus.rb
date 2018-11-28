@@ -64,6 +64,7 @@ class Menus
 
   def get_selected_from(arr)
     return if arr.nil?
+
     if arr.size == 1
       puts '=> ^^^^^^ Единственный вариант, выбран автоматически'
       return arr[0]

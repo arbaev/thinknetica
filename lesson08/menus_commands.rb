@@ -5,15 +5,17 @@ module MenusCommands
     '3' => { label: 'Создать пассажирский поезд', func: :train_create, args: :passenger },
     '4' => { label: 'Добавить вагоны к поезду', func: :train_add_wagons },
     '5' => { label: 'Создать маршрут', func: :route_create },
+    '6' => { label: 'Назначить маршрут поезду', func: :train_set_route },
     '0' => { label: 'Выход в главное меню', func: :change_menu }
   }.freeze
   EDITING_MENU = {
     '1' => { label: 'Добавить вагоны к поезду', func: :train_add_wagons },
     '2' => { label: 'Отцепить вагоны от поезда', func: :train_del_wagons },
-    '3' => { label: 'Загрузить вагон', func: :train_load_wagon },
-    '4' => { label: 'Добавить станцию в маршрут', func: :route_add_station },
-    '5' => { label: 'Удалить станцию из маршрута', func: :route_del_station },
-    '6' => { label: 'Назначить маршрут поезду', func: :train_set_route },
+    '3' => { label: 'Загрузить вагон', func: :load_wagon_cargo },
+    '4' => { label: 'Занять места в вагоне', func: :load_wagon_passenger },
+    '5' => { label: 'Добавить станцию в маршрут', func: :route_add_station },
+    '6' => { label: 'Удалить станцию из маршрута', func: :route_del_station },
+    '7' => { label: 'Назначить маршрут поезду', func: :train_set_route },
     '0' => { label: 'Выход в главное меню', func: :change_menu }
   }.freeze
   MOVING_MENU = {
@@ -27,9 +29,11 @@ module MenusCommands
     '1' => { label: 'Список станций', func: :show_stations },
     '2' => { label: 'Список маршрутов', func: :show_routes },
     '3' => { label: 'Список всех поездов', func: :show_trains },
-    '4' => { label: 'Список всех поездов с маршрутом', func: :show_trains_with_routes },
-    '5' => { label: 'Список поездов на станции', func: :station_trains_list },
-    '6' => { label: 'Список вагонов поезда', func: :show_wagons },
+    '4' => { label: 'Список поездов с маршрутом', func: :show_trains, args: :current_station },
+    '5' => { label: 'Список грузовых поездов', func: :show_trains, args: [:type, :cargo] },
+    '6' => { label: 'Список пассажирских поездов', func: :show_trains, args: [:type, :passenger] },
+    '7' => { label: 'Список поездов на станции', func: :station_trains_list },
+    '8' => { label: 'Список вагонов поезда', func: :show_wagons },
     '0' => { label: 'Выход в главное меню', func: :change_menu }
   }.freeze
   MAIN_MENU = {
