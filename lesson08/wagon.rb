@@ -1,11 +1,11 @@
 require_relative 'manufacturer'
 require_relative 'validation'
-
+# common Wagon methods
 class Wagon
   include Manufacturer
   include Validation
 
-  WAGON_TYPES = %i[cargo passenger].freeze
+  WAGON_TYPES = Train::TRAIN_TYPES
 
   attr_reader :type
 

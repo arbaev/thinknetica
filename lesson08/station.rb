@@ -1,6 +1,6 @@
 require_relative 'instance_counter'
 require_relative 'validation'
-
+# methods for Stations
 class Station
   include InstanceCounter
   include Validation
@@ -27,16 +27,16 @@ class Station
 
   def types
     types = {}
-    self.trains.map { |t| types[t.type].nil? ? types[t.type] = 1 : types[t.type] += 1 }
+    @trains.map { |t| types[t.type].nil? ? types[t.type] = 1 : types[t.type] += 1 }
     types
   end
 
   def arrive(train)
-    self.trains.push(train)
+    @trains.push(train)
   end
 
   def depart(train)
-    self.trains.delete(train)
+    @trains.delete(train)
   end
 
   def each_train

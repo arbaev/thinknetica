@@ -1,7 +1,7 @@
 require_relative 'manufacturer'
 require_relative 'instance_counter'
 require_relative 'validation'
-
+# common Wagon methods
 class Train
   include InstanceCounter
   include Manufacturer
@@ -29,8 +29,8 @@ class Train
     register_instance
   end
 
-  def route_set(r)
-    @route = r
+  def route_set(route)
+    @route = route
     @station_index = 0
     current_station.arrive(self)
   end
@@ -73,17 +73,17 @@ class Train
   def wagon_add(wagon)
     return if moving?
 
-    self.wags.push(wagon)
+    @wags.push(wagon)
   end
 
-  def wagon_del
+  def wagon_del(wagon)
     return if moving?
 
-    self.wags.delete_at(-1)
+    @wags.delete(wagon)
   end
 
   def wagons
-    wags.size
+    @wags.size
   end
 
   def each_wagon
@@ -91,7 +91,7 @@ class Train
   end
 
   def moving?
-    self.speed != 0
+    @speed != 0
   end
 
   def speed_up
@@ -114,7 +114,7 @@ class Train
     end
 
     unless @number =~ TRAIN_NUMBER_FORMAT
-      raise ArgumentError, 'Неправильный номер вагона: XXX(-XX)'
+      raise ArgumentError, 'Неправильный номер поезда, формат: XXX(-XX)'
     end
 
     if self.class.find(@number)

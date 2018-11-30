@@ -1,6 +1,6 @@
 require_relative 'instance_counter'
 require_relative 'validation'
-
+# methods for Routes
 class Route
   include InstanceCounter
   include Validation
@@ -36,7 +36,7 @@ class Route
       raise ArgumentError, "=> Станции #{station.name} нет в маршруте"
     end
 
-    if station == @start || station == @finish
+    if [@start, @finish].include?(station)
       raise ArgumentError, '=> Нельзя удалить начальную или конечную станции'
     end
 
