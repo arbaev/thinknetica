@@ -1,7 +1,7 @@
 require_relative 'manufacturer'
 require_relative 'instance_counter'
 require_relative 'validation'
-# common Wagon methods
+
 class Train
   include InstanceCounter
   include Manufacturer
@@ -73,17 +73,17 @@ class Train
   def wagon_add(wagon)
     return if moving?
 
-    @wags.push(wagon)
+    self.wags.push(wagon)
   end
 
-  def wagon_del(wagon)
+  def wagon_del
     return if moving?
 
-    @wags.delete(wagon)
+    self.wags.delete_at(-1)
   end
 
   def wagons
-    @wags.size
+    wags.size
   end
 
   def each_wagon
@@ -91,7 +91,7 @@ class Train
   end
 
   def moving?
-    @speed != 0
+    self.speed != 0
   end
 
   def speed_up
@@ -114,7 +114,7 @@ class Train
     end
 
     unless @number =~ TRAIN_NUMBER_FORMAT
-      raise ArgumentError, 'Неправильный номер поезда, формат: XXX(-XX)'
+      raise ArgumentError, 'Неправильный номер вагона: XXX(-XX)'
     end
 
     if self.class.find(@number)

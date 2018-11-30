@@ -67,7 +67,7 @@ class Menus
 
     if arr.size == 1
       puts '=> ^^^^^^ Единственный вариант, выбран автоматически'
-      return arr.first
+      return arr[0]
     end
     item = arr[ask_i('Выберите номер объекта:')]
     correct?(item) ? item : raise(ArgumentError, '=> Неправильно указан номер')

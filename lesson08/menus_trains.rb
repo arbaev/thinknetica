@@ -3,8 +3,8 @@ module MenusTrains
   private
 
   def train_create(type)
-    num = ask('Введите номер поезда')
-    train = type == :passenger ? TrainPassenger.new(num) : TrainCargo.new(num)
+    number = ask('Введите номер поезда')
+    train = type == :passenger ? TrainPassenger.new(number) : TrainCargo.new(number)
     puts "=> Создан #{train_info(train)}"
     @trains.push(train)
   rescue ArgumentError => e
@@ -12,9 +12,8 @@ module MenusTrains
     retry
   end
 
-  # Show trains with selected attributes.
-  # input is an array [:attribute, :value]
-  # or just :attribute if value doesn't matter
+  # show trains with selected attributes
+  # input is an array [:attribute, :value] or just :attribute if value don't interesting
   # default attr :number means 'all trains' because they all have number attr
   def show_trains(attr = :number)
     trains_arr = trains_select(attr)
@@ -39,21 +38,41 @@ module MenusTrains
     "поезд #{train.number}, тип: #{train.type}, вагонов: #{train.wagons}"
   end
 
-  def choose_train(train_attr = :number)
-    trains = show_trains(train_attr)
-    return if trains.nil?
+  def train_add_wagons
+    return if show_trains.nil?
 
-    get_selected_from(trains)
+    train = get_selected_from(@trains)
+    wagons_amount = ask('Сколько вагонов добавить?').to_i
+
+    if train.type == :cargo
+      capacity = ask('Какой объём каждого вагона?').to_f
+      wagons_amount.times { train.wagon_add(WagonCargo.new(capacity)) }
+    else
+      seats = ask('Какое количество мест у каждого вагона?').to_i
+      wagons_amount.times { train.wagon_add(WagonPassenger.new(seats)) }
+    end
+    puts "=> Вагоны добавлены, #{train_info(train)}"
+  rescue ArgumentError => e
+    puts e.message
+  end
+
+  def train_del_wagons
+    return if show_trains.nil?
+
+    train = get_selected_from(@trains)
+    wagons_amount = ask('Сколько вагонов отцепить?').to_i
+    wagons_amount.times { train.wagon_del }
+    puts "=> Вагоны отцеплены, #{train_info(train)}"
   rescue ArgumentError => e
     puts e.message
   end
 
   def train_set_route
     return if show_routes.nil?
-
     route = get_selected_from(@routes)
-    train = choose_train
-    return if train.nil?
+
+    return if show_trains.nil?
+    train = get_selected_from(@trains)
 
     train.route_set(route)
     puts "=> Поезду #{train.number} установлен маршрут #{route_info(route)}"
@@ -62,13 +81,12 @@ module MenusTrains
   end
 
   def train_move_forward
-    train = choose_train(:current_station)
+    train = train_moving
     return if train.nil?
 
     if train.move_forward
-      puts "=> Поезд #{train.number} уехал со станции "\
-           "#{train.prev_station.name} и приехал "\
-           "на станцию #{train.current_station.name}."
+      puts "=> Поезд #{train.number} уехал со станции \
+#{train.prev_station.name} и приехал на станцию #{train.current_station.name}."
     else
       puts "=> Поезд #{train.number} на конечной станции."
     end
@@ -78,16 +96,22 @@ module MenusTrains
   end
 
   def train_move_back
-    train = choose_train(:current_station)
+    train = train_moving
     return if train.nil?
 
     if train.move_back
-      puts "=> Поезд #{train.number} приехал "\
-           "на станцию #{train.current_station.name}."
+      puts "=> Поезд #{train.number} приехал на станцию #{train.current_station.name}."
     else
       puts "=> Поезд #{train.number} на начальной станции."
     end
     train.current_station
+  rescue ArgumentError => e
+    puts e.message
+  end
+
+  def train_moving
+    trains_with_routes = show_trains_with_routes
+    get_selected_from(trains_with_routes)
   rescue ArgumentError => e
     puts e.message
   end
