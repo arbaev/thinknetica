@@ -6,6 +6,9 @@ class Route
   include Validation
 
   attr_reader :start, :finish
+  validate :start, :class, Station
+  validate :finish, :class, Station
+  validate :start, :equal, :finish
 
   def initialize(start, finish)
     @start = start
@@ -41,17 +44,5 @@ class Route
     end
 
     @stations.delete(station)
-  end
-
-  protected
-
-  def validate!
-    if @stations.find { |s| s.class != Station }
-      raise ArgumentError, '=> Параметром маршрута должна быть станция'
-    end
-
-    if @start == @finish
-      raise ArgumentError, '=> Начальная и конечная станции должны быть разные'
-    end
   end
 end

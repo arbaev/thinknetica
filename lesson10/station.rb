@@ -6,6 +6,9 @@ class Station
   include Validation
 
   attr_reader :name, :trains
+  validate :name, :presence
+  validate :name, :class, String
+  validate :name, :format, /^[a-z]{3}$/
 
   @@all_stations = []
 
@@ -20,6 +23,7 @@ class Station
   def initialize(name)
     @name = name.to_s
     validate!
+    validate_self
     @trains = []
     @@all_stations.push(self)
     register_instance
@@ -45,14 +49,7 @@ class Station
 
   protected
 
-  def validate!
-    raise ArgumentError, '=> Название станции не указано' if @name.nil?
-    raise ArgumentError, '=> Название станции не может быть пустым' if @name.empty?
-
-    if @name[0] == ' '
-      raise ArgumentError, '=> Название станции не может начинаться с пробела'
-    end
-
+  def validate_self
     if self.class.find(@name)
       raise ArgumentError, '=> Станция с таким названием уже существует'
     end

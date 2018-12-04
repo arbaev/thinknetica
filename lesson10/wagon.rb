@@ -5,20 +5,12 @@ class Wagon
   include Manufacturer
   include Validation
 
-  WAGON_TYPES = Train::TRAIN_TYPES
-
   attr_reader :type
+  validate :type, :presence
+  validate :type, :include, Train::TRAIN_TYPES
 
   def initialize(type)
     @type = type
     validate!
-  end
-
-  protected
-
-  def validate!
-    unless WAGON_TYPES.include?(@type)
-      raise ArgumentError, 'Неправильный тип вагона'
-    end
   end
 end

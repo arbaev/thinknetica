@@ -11,6 +11,9 @@ class Train
   TRAIN_TYPES = %i[cargo passenger].freeze
 
   attr_reader :number, :speed, :type, :wags, :route
+  validate :number, :presence
+  validate :number, :format, TRAIN_NUMBER_FORMAT
+  validate :type, :include, TRAIN_TYPES
 
   @@trains_all = []
   def self.find(number)
@@ -21,6 +24,7 @@ class Train
     @number = number.to_s
     @type = type
     validate!
+    validate_self
     @wags = []
     @speed = 0
     @route = nil
@@ -108,15 +112,7 @@ class Train
 
   protected
 
-  def validate!
-    unless TRAIN_TYPES.include?(@type)
-      raise ArgumentError, 'Неправильный тип поезда'
-    end
-
-    unless @number =~ TRAIN_NUMBER_FORMAT
-      raise ArgumentError, 'Неправильный номер поезда, формат: XXX(-XX)'
-    end
-
+  def validate_self
     if self.class.find(@number)
       raise ArgumentError, 'Поезд с таким номером уже существует'
     end
